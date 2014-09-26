@@ -15,16 +15,16 @@
     <table class="table ">
     <thead>
         <tr>
-            <th>Date</th>
+            <th width="7%">Date</th>
             <th class="hidden-xs">Time</th>
             <th>Topic</th>
-            <th>Speaker</th>
-            <th class="text-center" width="20%">Action</th>
+            <th  width="9%">Speaker</th>
+            <th class="text-center" width="15%">Action</th>
         </tr>
     </thead>
             {% for unit in list %}
             <tr>
-                <td>{{unit.pub_date|date:"Y / m / d"}}</td>
+                <td>{{unit.pub_date|date:"m / d"}}</td>
                 <td class="hidden-xs">{{unit.time}}</td>
                 <td>{{unit.title}}</td>
                 <td>{{unit.speaker}}</td>

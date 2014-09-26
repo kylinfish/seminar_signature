@@ -2,16 +2,21 @@
 from django.shortcuts import render,get_object_or_404,HttpResponse
 from django.http import HttpResponse,HttpResponseRedirect
 from django.core.urlresolvers import reverse
-from web_app.models import unit,participate,student
 from django.contrib.auth.models import User,Group
 from django.contrib.auth.decorators import login_required
 from django.core import serializers #json serialize
 from django.utils import timezone
+from web_app.form import UploadFileForm
+from web_app.models import unit,participate,student
 import time
+import csv
 # Create your views here.
 
 
-#page render
+"""##############################################"""
+"""--------------Page render---------------------"""
+"""##############################################"""
+
 def index(req):
 	unit_list = unit.objects.all()
 	context = {'list':unit_list}
@@ -32,7 +37,18 @@ def list(req,unit_id):
 	context = {'list':p}
 	return render(req,"list.html",context)
 
-#operating method
+def manage(req):
+	return render(req,"manage.html")
+
+def unit_management(req):
+	form = UploadFileForm(request.POST, request.FILES)
+	return render(req,"unit_management.html",{'form':form})
+
+
+"""##############################################"""
+"""-------------Operating Method-----------------"""
+"""##############################################"""
+
 
 
 def scan_sign(req):
@@ -59,5 +75,29 @@ def scan_sign(req):
 		return HttpResponse("ur method is not post")
 
 
-def manage(req):
-	return render(req,"manage.html")
+
+def import_unit(req):
+	"""
+	with open(path) as f:
+		reader = csv.reader(f)
+		for row in reader:
+			a = unit(year=row[0],title=row[1],speaker=row[2],description=row[3],state=row[4],time=row[5]).save()
+			print a
+			"""
+	return HttpResponse("123")
+
+
+# Imaginary function to handle an uploaded file.
+
+def import_unit(request):
+	"""
+    dataReader = csv.reader(open('/Users/viplab/Desktop/unit.csv'), delimiter=',', quotechar='"')
+    for i,row in enumerate(dataReader):
+    	if i!=0:
+    		timeS =  row[0]+" "+row[1].split("-")[0].replace("-",":")
+    		unit(title=row[4],speaker=row[3],description=row[4],pub_date=timeS ,time=row[1]).save()
+	"""
+	return render(request,"unit_management.html")
+    #return render_to_response('upload.html', {'form': form})
+
+

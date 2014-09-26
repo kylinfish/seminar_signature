@@ -1,0 +1,15 @@
+
+{% extends 'base.html' %} 
+{% block content %}
+{% load staticfiles %}
+<div class="container col-md-offset-2">
+  <div class="col-md-8">
+    <form action="/import_unit" method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="file" name="csv_file">
+      <button class="btn btn-info btn-lg" type="submit">Upload</button>
+    </form>
+    {{form}}
+  </div>
+</div>
+{% endblock %}
