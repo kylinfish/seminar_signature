@@ -1,0 +1,64 @@
+
+{% extends 'base.html' %} 
+{% block content %}
+{% load staticfiles %}  
+<style type="text/css">
+    .item-content{
+        width:100%;
+    }
+    .icon{
+        width:170px;
+        height:170px;
+    }
+</style>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.css">
+    <div class="container">
+        <div class="col-lg-4 col-sm-6">
+            <a href="#" onclick="alert('拉拉啦～～我不要做了')">
+            <div class="feature-widget">
+                <article class="home-features-item hover">
+                    <div class="item-icon">
+                        <img class="icon" src="{% static 'icon/finder.png'%}">
+                    </div>
+                    <div class="item-content">
+                        <h3>Unit Management</h3>
+                        
+                    </div>
+                </article> <!-- home-features-item -->
+            </div> <!-- feature-widget -->
+            </a>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <a href="#" onclick="alert('給錢給錢')">
+            <div class="feature-widget">
+                <article class="home-features-item hover">
+                    <div class="item-icon">
+                        <img class="icon" src="{% static 'icon/people1.png'%}">
+                    </div>
+                    <div class="item-content">
+                        <h3>Student Management</h3>
+                        
+                    </div>
+                </article> <!-- home-features-item -->
+            </div> <!-- feature-widget -->
+            </a>
+        </div>
+        <div class="col-lg-4 col-sm-6">
+            <a href="#" onclick="alert('我累累了')">
+            <div class="feature-widget">
+                <article class="home-features-item hover">
+                    <div class="item-icon">
+                        <img class="icon" src="{% static 'icon/task.png'%}">
+                    </div>
+                    <div class="item-content">
+                        <h3>Visualization</h3>
+                    </div>
+                </article> <!-- home-features-item -->
+            </div> <!-- feature-widget -->
+            </a>
+        </div>
+
+        
+    </div> <!-- /container -->
+
+{% endblock %}

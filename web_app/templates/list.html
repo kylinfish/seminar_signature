@@ -1,0 +1,66 @@
+
+{% extends 'base.html' %} 
+{% block content %}
+{% load staticfiles %}  
+<style type="text/css">
+    thead{
+        color:#fff;
+        background-color: rgba(255,255,255,0.4);
+    }
+    tbody{
+        color:#fff;
+        background-color: rgba(255,255,255,0.2);
+    }
+     .paginate_button >a{
+        color:#3366FF;
+
+    }
+</style>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.css">
+    <div class="container">
+        {% if list %}
+        <table id="example" class="table table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>StudentID</th>
+                <th>Name</th>
+                <th>State</th>
+            </tr>
+        </thead>
+ 
+        <tbody>
+          {% for p in list%}
+            <tr>
+                <td>{{p.sig_time |date:"H : m : s"}}</td>
+                <td>{{p.ref_std.s_id}}</td>
+                <td>{{p.ref_std.name}}</td>
+                {% if p.state == "signin"%}
+                <td  style="color:green">{{p.state}}</td>
+                {% else%}
+                <td class="text-danger">{{p.state}}</td>
+                {% endif %}
+            </tr>
+           {% endfor %}
+        </tbody>
+        {% else %}
+        <div class="profile">
+        <h1>No records found.</h1>
+    </div>
+        {% endif %}
+    </table>
+        </div>
+    </div>
+
+    </div> <!-- /container -->
+<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="//cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+
+  <script type="text/javascript">
+  $(document).ready(function() {
+    $('#example').dataTable();
+} );
+
+  </script>
+{% endblock %}

@@ -1,0 +1,43 @@
+
+{% extends 'base.html' %} 
+{% load staticfiles %}
+{% block content %}
+<style type="text/css">
+    .icon{
+        width:80px;
+        height:80px;
+    }
+</style>
+<div class="container">
+    <div class="col-xs-12 col-lg-12 ">
+    <h1 class="page-header"><img class="icon" src="{% static 'icon/p6.png'%}"> Seminar Course</h1>
+    {% if list %}
+    <table class="table ">
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th class="hidden-xs">Time</th>
+            <th>Topic</th>
+            <th>Speaker</th>
+            <th class="text-center" width="20%">Action</th>
+        </tr>
+    </thead>
+            {% for unit in list %}
+            <tr>
+                <td>{{unit.pub_date|date:"Y / m / d"}}</td>
+                <td class="hidden-xs">{{unit.time}}</td>
+                <td>{{unit.title}}</td>
+                <td>{{unit.speaker}}</td>
+                <td class="text-center"><a class="btn btn-success" href="signature/{{unit.pk}}">Signature</a> 
+                <a class="btn btn-primary" href="list/{{unit.pk}}">List</a></td>
+            </tr>
+            {% endfor %}
+    </table>
+    {% else %}
+        <div class="alert alert-warning">Sorry! 目前還沒有任何Seminar課程喔！</div>
+    {% endif %}
+    </div>
+</div>
+{% endblock %}
+
+
