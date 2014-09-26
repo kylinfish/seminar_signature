@@ -32,7 +32,7 @@
         <tbody>
           {% for p in list%}
             <tr>
-                <td>{{p.sig_time |date:"H : m : s"}}</td>
+                <td>{{p.sig_time}}</td>
                 <td>{{p.ref_std.s_id}}</td>
                 <td>{{p.ref_std.name}}</td>
                 {% if p.state == "signin"%}

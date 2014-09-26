@@ -86,9 +86,9 @@ USE_TZ = True
 
 
 STATIC_URL = '/static/'
-STATIC_ROOT = '/var/www/ss_static/' # output folder
+STATIC_ROOT = '/var/www/ecard1.5_static/' # output folder
 
-MEDIA_ROOT = '/var/www/ss_media/'#server absolute path
+MEDIA_ROOT = '/var/www/ecard1.5_media/'#server absolute path
 MEDIA_URL = '/static/media/'
 
 
