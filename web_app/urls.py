@@ -9,6 +9,4 @@ urlpatterns = patterns('',
     url(r'^scan_sign', views.scan_sign, name='scan_sign'),
     url(r'^manage', views.manage, name='manage'),
     url(r'^unit_management', views.unit_management, name='unit_management'),
-    url(r'^import_unit', views.import_unit, name='import_unit'),
-
 )

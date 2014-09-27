@@ -1,12 +1,12 @@
 #coding=utf-8
-from django.shortcuts import render,get_object_or_404,HttpResponse
+from django.shortcuts import render,get_object_or_404,HttpResponse,render_to_response
 from django.http import HttpResponse,HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User,Group
 from django.contrib.auth.decorators import login_required
 from django.core import serializers #json serialize
 from django.utils import timezone
-from web_app.form import UploadFileForm
+from web_app.form import uploadForm
 from web_app.models import unit,participate,student
 import time
 import csv
@@ -41,8 +41,19 @@ def manage(req):
 	return render(req,"manage.html")
 
 def unit_management(req):
-	form = UploadFileForm(request.POST, request.FILES)
-	return render(req,"unit_management.html",{'form':form})
+	if req.method == "POST":
+		upfm = uploadForm(req.POST, req.FILES) #blind
+		if upfm.is_valid():
+			filepath = upfm.cleaned_data['upfile'].name
+			f= upfm.cleaned_data['upfile'].read()
+			importFile(f,"student")
+			upfm = uploadForm()
+			# return HttpResponseRedirect(reverse('upload:index'))
+		# return HttpResponse('ok')
+    		return render_to_response('unit_management.html', {'form':upfm})
+	else:
+		upfm = uploadForm()
+	return render_to_response('unit_management.html',{'form':upfm})
 
 
 """##############################################"""
@@ -75,29 +86,20 @@ def scan_sign(req):
 		return HttpResponse("ur method is not post")
 
 
-
-def import_unit(req):
-	"""
-	with open(path) as f:
-		reader = csv.reader(f)
-		for row in reader:
-			a = unit(year=row[0],title=row[1],speaker=row[2],description=row[3],state=row[4],time=row[5]).save()
-			print a
-			"""
-	return HttpResponse("123")
-
-
-# Imaginary function to handle an uploaded file.
-
-def import_unit(request):
-	"""
-    dataReader = csv.reader(open('/Users/viplab/Desktop/unit.csv'), delimiter=',', quotechar='"')
-    for i,row in enumerate(dataReader):
-    	if i!=0:
-    		timeS =  row[0]+" "+row[1].split("-")[0].replace("-",":")
-    		unit(title=row[4],speaker=row[3],description=row[4],pub_date=timeS ,time=row[1]).save()
-	"""
-	return render(request,"unit_management.html")
-    #return render_to_response('upload.html', {'form': form})
-
-
+def importFile(file,model):
+	if (model == "unit"):
+	    dataReader = csv.reader(open('/Users/win/Desktop/103final.csv'), delimiter=',', quotechar='"')
+	    print dataReader.__class__
+	    return
+	    for i,row in enumerate(dataReader):
+	    	if i!=0:
+	    		timeS =  row[0]+" "+row[1].split("-")[0].replace("-",":")
+	    		unit(title=row[4],speaker=row[3],description=row[4],pub_date=timeS ,time=row[1]).save()
+	    return "success"
+	else:
+		for row in csv.reader(file.splitlines()):
+			try:
+				student(name=row[1],card=row[4],s_id=row[3],c_g=row[2] ,pic="").save()
+			except :
+				pass
+		return "success"
