@@ -44,13 +44,13 @@ def unit_management(req):
 	if req.method == "POST":
 		upfm = uploadForm(req.POST, req.FILES) #blind
 		if upfm.is_valid():
-			filepath = upfm.cleaned_data['upfile'].name
+			model_type = req.POST['model_type']
 			f= upfm.cleaned_data['upfile'].read()
-			importFile(f,"student")
-			upfm = uploadForm()
+			state = importFile(f,model_type)
+			upfm = uploadForm()	
 			# return HttpResponseRedirect(reverse('upload:index'))
 		# return HttpResponse('ok')
-    		return render_to_response('unit_management.html', {'form':upfm})
+    		return render_to_response('unit_management.html', {'form':upfm,'state':state})
 	else:
 		upfm = uploadForm()
 	return render_to_response('unit_management.html',{'form':upfm})
@@ -88,14 +88,13 @@ def scan_sign(req):
 
 def importFile(file,model):
 	if (model == "unit"):
-	    dataReader = csv.reader(open('/Users/win/Desktop/103final.csv'), delimiter=',', quotechar='"')
-	    print dataReader.__class__
-	    return
-	    for i,row in enumerate(dataReader):
-	    	if i!=0:
-	    		timeS =  row[0]+" "+row[1].split("-")[0].replace("-",":")
-	    		unit(title=row[4],speaker=row[3],description=row[4],pub_date=timeS ,time=row[1]).save()
-	    return "success"
+		for row in csv.reader(file.splitlines()):
+			try:
+				timeS =  row[0]+" "+row[1].split("-")[0].replace("-",":")
+				unit(title=row[4],speaker=row[3],description=row[4],pub_date=timeS,time=row[1]).save()
+			except :
+				pass
+		return "success"
 	else:
 		for row in csv.reader(file.splitlines()):
 			try:
