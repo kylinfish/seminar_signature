@@ -55,6 +55,26 @@ def unit_management(req):
 		upfm = uploadForm()
 	return render_to_response('unit_management.html',{'form':upfm})
 
+def std_search(req):
+	if req.method == "POST":
+		key = req.POST['name']
+		s_isExist = student.objects.filter(name=key).exists()
+		if s_isExist:
+			s= student.objects.filter(name=key).get()
+			p = participate.objects.filter(ref_std=s)
+			if p:
+				return render_to_response('std_management.html', {'state':'search success.','list':p})
+		else:
+			sid_isExist = student.objects.filter(s_id__icontains=key).exists()
+			if sid_isExist:
+				s = student.objects.filter(s_id__icontains=key).get()
+				p = participate.objects.filter(ref_std=s)
+				return render_to_response('std_management.html', {'state':'search success.','list':p})
+		return render_to_response('std_management.html', {'state':'no any records!!'} )
+	else:
+		#return render_to_response('std_management.html',{'state':'method is not post. please try again.'})	
+		return render_to_response('std_management.html',{'state':'Please input student name'})
+
 
 """##############################################"""
 """-------------Operating Method-----------------"""
@@ -102,3 +122,4 @@ def importFile(file,model):
 			except :
 				pass
 		return "success"
+                                                                                                                                                                                                                                                                                                                                                                                                                                                               

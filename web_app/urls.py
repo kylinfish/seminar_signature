@@ -9,4 +9,5 @@ urlpatterns = patterns('',
     url(r'^scan_sign', views.scan_sign, name='scan_sign'),
     url(r'^manage', views.manage, name='manage'),
     url(r'^unit_management', views.unit_management, name='unit_management'),
+    url(r'^std_search', views.std_search, name='std_search'),
 )

@@ -1,0 +1,43 @@
+
+{% extends 'base.html' %} 
+{% block content %}
+{% load staticfiles %}
+<div class="container col-md-offset-2">
+  <div class="container col-md-offset-2">
+      <div class="col-md-8">
+        <div stlye="padding-bottom:30px;">
+        <form accept-charset="UTF-8" action="/std_search" method="post">
+          <div class="input-group">
+            <img class="icon" src="{% static 'icon/p7.png' %}">     
+             <input class="btn btn-lg" name="name" type="text" placeholder="name or student id" required>
+             <button class="btn btn-info btn-lg" type="submit">Search</button>
+          </div>
+          </form>
+          <h2><span style="color:white;">{{state}}</span></h2>
+        </div>
+        {% if list %}
+        <table id="example" class="table table-bordered" cellspacing="0" width="100%" >
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Topic</th>
+                <th>StudentID</th>
+                <th>Name</th>
+            </tr>
+        </thead>
+ 
+        <tbody>
+          {% for p in list%}
+            <tr>
+                <td>{{p.sig_time}}</td>
+                <td>{{p.ref_unit.title}}</td>
+                <td>{{p.ref_std.s_id}}</td>
+                <td>{{p.ref_std.name}}</td>
+            </tr>
+           {% endfor %}
+        </tbody>
+        {% endif %}
+      </div>
+  	</div>
+</div>
+{% endblock %}
