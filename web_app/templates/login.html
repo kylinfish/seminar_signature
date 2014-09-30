@@ -2,114 +2,92 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-    <meta http-equiv="ecard1.5" content="ecard NTNU-CSIE">
+    <meta http-equiv="Login - Seminar Signature " content="ecard NTNU-CSIE">
+    <meta name="author" content="Yu Chen Lin">
     {% load staticfiles %}  
     <link rel="SHORTCUT ICON" href="{% static 'img/icon.png'%}">
     <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap.css' %}" />
-    <link href='http://fonts.googleapis.com/css?family=Molle:400italic' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Lobster' rel='stylesheet' type='text/css'>
     <script src="{% static 'js/jQuery v1.10.2.js' %}"></script>
-    <script src="{% static 'js/bootstrap.min.js' %}"></script>   
     <title>Login for eCard v1.5</title>
   </head>
 <style type="text/css">
-html,body {
-height:100%;
+html {
+  position: relative;
+  min-height: 100%;
 }
-
-h1 {
-font-family: Arial,sans-serif
-font-size:80px;
-color:#DDCCEE;
+body { 
+ background: url('{% static 'img/1.jpg'  %}') no-repeat center center fixed; 
+ -webkit-background-size: cover;
+ -moz-background-size: cover;
+ -o-background-size: cover;
+ background-size: cover;
+margin-bottom: 60px;
 }
-
-.lead {
-color:#DDCCEE;
+.row{
+  font-family: 'Lobster', cursive;
 }
-
-
-/* Custom container */
-.container-full {
-margin: 0 auto;
-width: 100%;
-min-height:100%;
-background: radial-gradient(#6A00CD,#210042); /* Standard syntax (must be last) */
-color:#eee;
-overflow:hidden;
-
+h1{
+  font-family: 'Lobster', cursive;
 }
-
-.container-full a {
-color:#efefef;
-text-decoration:none;
+.panel-default {
+ opacity: 0.9;
+ margin-top:30px;
 }
-
-.v-center {
-margin-top:7%;
+.form-group.last {
+ margin-bottom:0px;
 }
-.form-signin {
-max-width: 330px;
-padding: 15px;
-margin: 0 auto;
-}
-.form-signin .form-signin-heading,
-.form-signin .checkbox {
-margin-bottom: 10px;
-}
-.form-signin .checkbox {
-font-weight: normal;
-}
-.form-signin .form-control {
-position: relative;
-height: auto;
--webkit-box-sizing: border-box;
--moz-box-sizing: border-box;
-box-sizing: border-box;
-padding: 10px;
-font-size: 16px;
-}
-.form-signin .form-control:focus {
-z-index: 2;
-}
-.form-signin input[type="email"] {
-margin-bottom: -1px;
-border-bottom-right-radius: 0;
-border-bottom-left-radius: 0;
-}
-.form-signin input[type="password"] {
-margin-bottom: 10px;
-border-top-left-radius: 0;
-border-top-right-radius: 0;
-}
-
-</style>
-<body>
+.footer {
+  position: absolute;
+  bottom: 0;
+  right:0;
+  width: 100%;
+  /* Set the fixed height of the footer here */
+  height: 60px;
+}</style>
 <body>
 <div class="container-full">
-  <div class="row">
-    <div class="col-lg-12 text-center v-center">
-      <h1><img src="{% static '/static/img/icon.png'%}" width="6.5%"> eCard 教學系統 <span style="font-size:15px; color:#FFFF66;"> <strong>v1.5</strong></span></h1>
-      <div class="container">
-        <form class="form-signin" role="form" method="POST" action="/login">
-          <h2 class="form-signin-heading">系統登入</h2>
-
-          <input type="text" class="form-control" name="username"placeholder="帳號" required autofocus>
-          <input type="password" class="form-control" name="password" placeholder="密碼" required>
-          <button class="btn btn-lg btn-primary btn-block" type="submit"><i class="glyphicon glyphicon-hand-right"></i>  登入 </button>
+    <div class="row">
+        <div class="col-md-3 col-md-offset-7">
+          <h1><img src="{% static 'icon/p4.png'%}" width="6.5%"> Seminar Signature  <small>system</small></strong></span></h1>
+            <div class="panel panel-default">
+                <div class="panel-heading"> <strong class="">Login</strong>
+                </div>
+                <div class="panel-body">
+                    <form class="form-horizontal" role="form" method="POST" action="/login">
+                      <div class="form-group">
+                            <label for="inputEmail3" class="col-sm-3 control-label">account</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="username" required autofocus>
+                            </div>
+                        </div>
+                      <div class="form-group">
+                            <label for="inputPassword3" class="col-sm-3 control-label">Password</label>
+                            <div class="col-sm-9">
+                                <input type="password" class="form-control" name="password" required>
+                            </div>
+                        </div>
+                        <div class="form-group last">
+                            <div class="col-sm-offset-3 col-sm-9">
+                                <button type="submit" class="btn btn-success btn-sm">Sign in</button>
+                                <button type="reset" class="btn btn-default btn-sm">Reset</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
           {% if msg  %}
-          <div class="alert alert-danger">
-          <span class="glyphicon glyphicon-info-sign"> 帳號/密碼 錯誤，請重新輸入</span> 
-          </div>
+            <div class="alert alert-danger">
+              <span class="glyphicon glyphicon-info-sign"> acc/pwd Error, Please try again.</span> 
+            </div>
           {% endif %}
-        </form>
-
-
-      <br><br><br>
-      <div class="row" style="text-align:center;">
-      <hr>
-      © 2014 VIPLab, National Taiwan Normal University.<br>
+    </div>
+</div>
+<div class="footer">
+      <div class="container col-md-offset-11 col-md-1 ">
+        <p>© 2014 CSIE, NTNU. </p> 
+        <p>&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Created By Win</p>
       </div>
       </div>
-</div> <!-- /container full -->
-
-</body>
-</html>
+    </div>
+</div>

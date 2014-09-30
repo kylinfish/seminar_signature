@@ -3,11 +3,13 @@ from django.shortcuts import render,get_object_or_404,HttpResponse,render_to_res
 from django.http import HttpResponse,HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User,Group
+from django.contrib.auth import authenticate, login
 from django.contrib.auth.decorators import login_required
 from django.core import serializers #json serialize
 from django.utils import timezone
 from web_app.form import uploadForm
 from web_app.models import unit,participate,student
+
 import time
 import csv
 # Create your views here.
@@ -16,12 +18,32 @@ import csv
 """##############################################"""
 """--------------Page render---------------------"""
 """##############################################"""
+from django.shortcuts import render,redirect,render_to_response,HttpResponseRedirect
+from django.http import HttpResponse
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate, login
 
+def auth_vertify(request):
+	if request.method == 'POST':
+		user = authenticate(username=request.POST['username'], password=request.POST['password'])
+		if user is not None:
+			if user.is_active:
+				login(request, user)
+				request.session['username'] = user.id #save session
+				return HttpResponseRedirect('/')
+			else:
+				return render_to_response('login.html',{'msg':'error'})
+		else:
+			return render_to_response('login.html',{'msg':'error'})
+	return render_to_response('login.html')
+
+@login_required(login_url='/login')
 def index(req):
 	unit_list = unit.objects.all()
 	context = {'list':unit_list}
 	return render(req,"index.html",context)
 
+@login_required(login_url='/login')
 def signature(req,unit_id):
 	s_exist = participate.objects.filter(ref_unit=unit_id).exists()
 	if s_exist:
@@ -32,14 +54,20 @@ def signature(req,unit_id):
 	else:
 		context ={'state': " No records found"}
 	return render(req,"signature.html",context )
+
+@login_required(login_url='/login')
 def list(req,unit_id):
 	p = participate.objects.filter(ref_unit=unit_id).order_by("-sig_time")
 	context = {'list':p}
 	return render(req,"list.html",context)
 
+
+@login_required(login_url='/login')
 def manage(req):
 	return render(req,"manage.html")
 
+
+@login_required(login_url='/login')
 def unit_management(req):
 	if req.method == "POST":
 		upfm = uploadForm(req.POST, req.FILES) #blind
@@ -55,6 +83,7 @@ def unit_management(req):
 		upfm = uploadForm()
 	return render_to_response('unit_management.html',{'form':upfm})
 
+@login_required(login_url='/login')
 def std_search(req):
 	if req.method == "POST":
 		key = req.POST['name']
@@ -81,7 +110,7 @@ def std_search(req):
 """##############################################"""
 
 
-
+@login_required(login_url='/login')
 def scan_sign(req):
 	if req.method == 'POST':
 		card_id = req.POST['number']
@@ -105,7 +134,7 @@ def scan_sign(req):
 	else:
 		return HttpResponse("ur method is not post")
 
-
+@login_required(login_url='/login')
 def importFile(file,model):
 	if (model == "unit"):
 		for row in csv.reader(file.splitlines()):

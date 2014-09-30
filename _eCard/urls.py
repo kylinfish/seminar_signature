@@ -7,5 +7,6 @@ urlpatterns = patterns('',
     url(r'^admin/', include(admin.site.urls)),
     url(r'^', include('web_app.urls',namespace="web_app")),
     url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),
+    url(r'^logout$', 'django.contrib.auth.views.logout',{'template_name': 'login.html'}),
 
 )
