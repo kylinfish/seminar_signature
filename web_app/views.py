@@ -116,9 +116,9 @@ def scan_sign(req):
 				p = participate(ref_unit = u , ref_std = s)
 				p.save()
 			else:
-				sid_exist = student.objects.filter(s_id=card_id).exists()
+				sid_exist = student.objects.filter(s_id__icontains=card_id).exists()
 				if sid_exist:
-					s = student.objects.filter(s_id=card_id).get()
+					s = student.objects.filter(s_id__icontains=card_id).get()
 					p = participate(ref_unit = u , ref_std = s)
 					p.save()	
 			return HttpResponseRedirect(reverse('web_app:signature', args=(int(unit_id),)))
