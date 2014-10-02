@@ -1,0 +1,157 @@
+
+{% extends 'base.html' %} 
+{% block content %}
+{% load staticfiles %}
+
+<style type="text/css">
+/*Panel tabs*/
+.panel-tabs {
+    position: relative;
+    bottom: 30px;
+    clear:both;
+    border-bottom: 1px solid transparent;
+}
+
+.panel-tabs > li {
+    float: left;
+    margin-bottom: -1px;
+}
+
+.panel-tabs > li > a {
+    margin-right: 2px;
+    margin-top: 4px;
+    line-height: .85;
+    border: 1px solid transparent;
+    border-radius: 4px 4px 0 0;
+    color: #ffffff;
+}
+
+.panel-tabs > li > a:hover {
+    border-color: transparent;
+    color: #ffffff;
+    background-color: transparent;
+}
+
+.panel-tabs > li.active > a,
+.panel-tabs > li.active > a:hover,
+.panel-tabs > li.active > a:focus {
+    color: #fff;
+    cursor: default;
+    -webkit-border-radius: 2px;
+    -moz-border-radius: 2px;
+    border-radius: 2px;
+    background-color: rgba(255,255,255, .23);
+    border-bottom-color: transparent;
+}
+.panel-body{
+  background-image:none;
+  background-color:none;
+}
+</style>
+<br>
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Database List</h3>
+                    <span class="pull-right">
+                        <!-- Tabs -->
+                        <ul class="nav panel-tabs">
+                            <li class="active"><a href="#tab1" data-toggle="tab">Student </a></li>
+                            <li><a href="#tab2" data-toggle="tab">Rarticiple records</a></li>
+                        </ul>
+                    </span>
+                </div>
+                <div class="panel-body">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="tab1">
+                            <table id="example" class="table table-bordered" cellspacing="0" width="100%" >
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>class</th>
+                                    <th>StudentID</th>
+                                    <th>Name</th>
+                                    <th>Name</th>
+                                </tr>
+                            </thead>
+                            {% if std %}
+                            <tbody>
+                              {% for p in std%}
+                                <tr>
+                                    <td>{{p.pk}}</td>
+                                    <td>{{p.c_g}}</td>
+                                    <td>{{p.s_id}}</td>
+                                    <td>{{p.name}}</td>
+                                    <td>{{p.card}}</td>
+                                </tr>
+                               {% endfor %}
+                            </tbody>
+                            {% endif %}
+                            </table>
+                        </div>
+                        <div class="tab-pane" id="tab2">
+                            <div id="description" class="col-md-5 col-md-offset-4">
+                                <center><h3>Totall records:  <span style="color:#9AFF9A">{{p_count}}</span></h3>
+                                <h2>Do you want to show all data?</h2>
+                                <a onclick ="load_data();"><button type="button" class="btn btn-success ">Yes</button></a>
+                                </center>
+                                <i id="loading" class="fa fa-refresh fa-spin col-md-offset-6 hidden" style="font-size:80px;"></i>
+                            </div>
+                          <table id="table2"class="table table-bordered hidden" cellspacing="0" width="100%" >
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Time</th>
+                                    <th>Seminar Unit</th>
+                                    <th>Name</th>
+                                    <th>Student ID</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbody_co">
+                            </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+  </div>
+</div>
+
+
+
+<script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script type="text/javascript">
+  function load_data(btn,field){
+    $('#loading').toggleClass("hidden");
+      $.ajax({
+        url: "/particple_records" , 
+        type: 'POST',
+        async:false,
+        data: {
+            yes:"yes"
+        },success: function(msg) {
+            $.each(msg['p_list'], function(key, value){
+                $("#tbody_co").append("<tr><td>"+key+"</td>"+
+                                                        "<td>"+value['participate']+"</td>"+
+                                                        "<td>"+value['unit']+"</td>"+
+                                                        "<td>"+value['std']+"</td>"+
+                                                        "<td>"+value['sid']+"</td></tr>");
+            });
+            $('#table2').toggleClass("hidden");
+            $('#loading').toggleClass("hidden");
+            $('#description').addClass("hidden");
+        },error: function(msg) {
+          $('#loading').toggleClass("hidden");
+          alert("error");
+          console.log('錯誤記錄');
+        }
+      });
+  }
+
+</script>
+
+{% endblock %}

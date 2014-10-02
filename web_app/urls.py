@@ -11,4 +11,6 @@ urlpatterns = patterns('',
     url(r'^manage', views.manage, name='manage'),
     url(r'^unit_management', views.unit_management, name='unit_management'),
     url(r'^std_search', views.std_search, name='std_search'),
+    url(r'^dblist', views.dblist, name='dblist'),
+    url(r'^particple_records', views.particple_records, name='particple_records'),
 )

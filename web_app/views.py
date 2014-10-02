@@ -13,7 +13,7 @@ from web_app.form import uploadForm
 from web_app.models import unit,participate,student
 
 import time
-import csv
+import csv,json
 # Create your views here.
 
 
@@ -63,6 +63,16 @@ def manage(req):
 	return render(req,"manage.html")
 
 @login_required(login_url='/login')
+def dblist(req):
+	if req.method == "POST":
+		return render_to_response('unit_management.html', {'form':upfm,'state':state})
+	else:
+		std = student.objects.all()
+		p_count = participate.objects.count()
+		p = {'std':std,'p_count':p_count}
+	return render(req,"dblist.html",p)
+
+@login_required(login_url='/login')
 def unit_management(req):
 	if req.method == "POST":
 		upfm = uploadForm(req.POST, req.FILES) #blind
@@ -86,17 +96,17 @@ def std_search(req):
 			s= student.objects.filter(name=key).get()
 			p = participate.objects.filter(ref_std=s)
 			if p:
-				return render_to_response('std_management.html', {'state':'search success.','list':p})
+				return render_to_response('std_search.html', {'state':'search success.','list':p})
 		else:
 			sid_isExist = student.objects.filter(s_id__icontains=key).exists()
 			if sid_isExist:
 				s = student.objects.filter(s_id__icontains=key).get()
 				p = participate.objects.filter(ref_std=s)
-				return render_to_response('std_management.html', {'state':'search success.','list':p})
-		return render_to_response('std_management.html', {'state':'no any records!!'} )
+				return render_to_response('std_search.html', {'state':'search success.','list':p})
+		return render_to_response('std_search.html', {'state':'no any records!!'} )
 	else:
 		#return render_to_response('std_management.html',{'state':'method is not post. please try again.'})	
-		return render_to_response('std_management.html',{'state':'Please input student name'})
+		return render_to_response('std_search.html',{'state':'Please input student name'})
 
 
 """##############################################"""
@@ -143,4 +153,27 @@ def importFile(file,model):
 			except :
 				pass
 		return "success"
-                                                                                                                                                                                                                                                                                                                                                                                                                                                               
+
+def particple_records(req):
+	#if req.method=="POST":
+	p_list = participate.objects.all().order_by('-ref_unit')
+	records= []
+	for p in p_list:
+		try:
+			u = unit.objects.filter(pk=p.ref_unit.id).get()
+			std = student.objects.filter(pk=p.ref_std.id).get()
+			tmp ={
+				'participate':str(p.sig_time).split('.')[0],
+				'unit':u.title,
+				'std':std.name,
+				'sid':std.s_id
+			}
+			records.append(tmp)
+		except:
+			pass
+	data = json.dumps({
+		'p_list': records,
+	})
+	return HttpResponse(data, content_type='application/json')
+	#else:
+	#	return HttpResponse("error")
