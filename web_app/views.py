@@ -11,7 +11,8 @@ from django.core import serializers #json serialize
 from django.utils import timezone
 from web_app.form import uploadForm
 from web_app.models import unit,participate,student
-
+from datetime import datetime,timedelta
+import datetime
 import time
 import csv,json
 # Create your views here.
@@ -113,6 +114,29 @@ def std_search(req):
 """-------------Operating Method-----------------"""
 """##############################################"""
 
+def timeDef(base_in,base_out,now):
+	now = datetime.datetime.today()
+	delta_now = datetime.timedelta(hours=now.hour,minutes=now.minute)
+
+	delta_in = datetime.timedelta(hours=int(base_in.split(":")[0]),minutes=int(base_in.split(":")[1]))
+	delta_out = datetime.timedelta(hours=int(base_out.split(":")[0]),minutes=int(base_out.split(":")[1]))
+	#sigin in check :
+	timecheck_in = str(abs(delta_now - delta_in)).split(":")
+	timecheck_out = str(abs(delta_now - delta_out)).split(":")
+	check = False
+	if int(timecheck_in[0])<=0:
+		if int(timecheck_in[1])<=60:
+			check = True
+			return "signin"
+	if int(timecheck_out[0])<=0:
+		if int(timecheck_out[1])<=60:
+			check = True
+			return "signout"
+	if check == False:
+		return "warning !!! "
+
+
+
 
 def scan_sign(req):
 	if req.method == 'POST':
@@ -120,17 +144,22 @@ def scan_sign(req):
 		unit_id = req.POST['unit_id']
 		try:
 			u = unit.objects.filter(pk=unit_id).get()
+			base_sigin = str(u.time.split("-")[0])
+			base_sigout = str(u.time.split("-")[1])
 			s_exist = student.objects.filter(card=card_id).exists()
+			now = datetime.datetime.today()
+			sign_state = timeDef(base_sigin,base_sigout,now)
 			if s_exist :
+				timeDef(base_sigin,base_sigout,now)
 				s = student.objects.filter(card=card_id).get()
-				p = participate(ref_unit = u , ref_std = s)
+				p = participate(ref_unit = u , ref_std = s,sig_time = now,state = sign_state)
 				p.save()
 			else:
 				sid_exist = student.objects.filter(s_id__icontains=card_id).exists()
 				if sid_exist:
 					s = student.objects.filter(s_id__icontains=card_id).get()
-					p = participate(ref_unit = u , ref_std = s)
-					p.save()	
+					p = participate(ref_unit = u , ref_std = s,sig_time = now,state = sign_state)
+					p.save()
 			return HttpResponseRedirect(reverse('web_app:signature', args=(int(unit_id),)))
 		except:
 			return HttpResponseRedirect(reverse('web_app:signature', args=(int(req.POST['unit_id']),)))

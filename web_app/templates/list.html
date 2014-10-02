@@ -35,11 +35,7 @@
                 <td>{{p.sig_time}}</td>
                 <td>{{p.ref_std.s_id}}</td>
                 <td>{{p.ref_std.name}}</td>
-                {% if p.state == "signin"%}
-                <td  style="color:green">{{p.state}}</td>
-                {% else%}
-                <td class="text-danger">{{p.state}}</td>
-                {% endif %}
+                <td >{{p.state}}</td>
             </tr>
            {% endfor %}
         </tbody>

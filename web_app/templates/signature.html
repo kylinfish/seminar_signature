@@ -94,14 +94,12 @@
     </div> <!-- /container -->
 <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.0.0/moment.min.js"></script>
 <script type="text/javascript" src="{% static 'js/clock.js'%}"></script>
-<script type="text/javascript" src="{% static 'js/clock.js'%}"></script>
 <script type="text/javascript">
 var url = window.location.toString();
 $(function() {
   url =url.replace(/.*signature\//, '');
   unit = url.replace('\/',"");
   $("#unit").val(unit);
-  $('#key').focus();
 });
 </script>
 {% endblock %}
