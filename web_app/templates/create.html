@@ -141,15 +141,27 @@ function sign(btn,field){
         $("#timestamp").html(time);
         $("#state").html(msg['state']);
         showSuccessMsg("Signature Success!!");
+      }else{
+        showErrorMsg(msg);  
+        resetField();
       }
     },
     error: function(msg) {
       $("#number").val("");
       showErrorMsg(msg);
+      resetField();
     }
   });
 }
 
+function resetField(){
+  $("#profile_class").html("");
+  $("#timestamp").html("");
+  $("#profile_pic").attr("src","");
+  $("#profile_user").html("");
+  $("#profile_s_id").html("");
+  $("#state").html("");
+}
 
 </script>
 {% endblock %}

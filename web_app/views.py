@@ -150,29 +150,64 @@ def ajax_up_fb(req):	#upload fb audio file first,and return audio url path !
 
 def scan_sign(req):
 	if req.is_ajax():
-		try:
-			u = unit.objects.filter(pk=unit_id).get()
-			base_sigin = str(u.time.split("-")[0])
-			base_sigout = str(u.time.split("-")[1])
-			s_exist = student.objects.filter(card=card_id).exists()
-			now = datetime.datetime.today()
-			sign_state = timeDef(base_sigin,base_sigout,now)
-			if s_exist :
-				timeDef(base_sigin,base_sigout,now)
-				s = student.objects.filter(card=card_id).get()
+		unit_id =req.POST['unit']
+		card_id =req.POST['card_id']
+		u = unit.objects.filter(pk=unit_id).get()
+		base_sigin = str(u.time.split("-")[0])
+		base_sigout = str(u.time.split("-")[1])
+		now = datetime.datetime.today()
+		s_exist = student.objects.filter(card=card_id).exists()
+		if s_exist:
+			s = student.objects.filter(card=card_id).get()
+			try:
+				sign_state = timeDef(base_sigin,base_sigout,now)
 				p = participate(ref_unit = u , ref_std = s,sig_time = now,state = sign_state)
 				p.save()
-			else:
-				sid_exist = student.objects.filter(s_id__icontains=card_id).exists()
-				if sid_exist:
-					s = student.objects.filter(s_id__icontains=card_id).get()
+				p = participate(
+					ref_unit = u, 
+					ref_std = s,
+					sig_time = now,
+					state = sign_state
+				).save()
+			except :
+				return HttpResponse('Card id signature failed')		
+		else:
+			s_exist2 = student.objects.filter(s_id__iexact=card_id).exists()
+			if s_exist2:
+				try:
+					s = student.objects.filter(s_id__iexact=card_id).get()
+					sign_state = timeDef(base_sigin,base_sigout,now)
 					p = participate(ref_unit = u , ref_std = s,sig_time = now,state = sign_state)
 					p.save()
-			return HttpResponseRedirect(reverse('web_app:signature', args=(int(unit_id),)))
-		except:
-			return HttpResponseRedirect(reverse('web_app:signature', args=(int(req.POST['unit_id']),)))
+					p = participate(
+						ref_unit = u, 
+						ref_std = s,
+						sig_time = now,
+						state = sign_state
+					).save()
+
+				except:
+					return HttpResponse('Student id signature failed')		
+			else:
+				return HttpResponse('Card number can\'t find mapping student.')	
+		try:
+			record =  participate.objects.all().order_by('-pk')[:1].get()
+			context={
+				'name':s.name,
+				'class':s.c_g,
+				'sid':s.s_id,
+				'pic':s.pic,
+				'timestamp':record.sig_time.strftime('%Y-%m-%d %H:%M'),
+				'state':record.state,
+			}
+			return HttpResponse(json.dumps(context),mimetype="application/json")
+		except :
+			return HttpResponse('User informaiton failed')
+			
 	else:
-		return HttpResponse("ur method is not post")
+		return HttpResponse('Http is not  ajax post ')
+
+	
 
 def importFile(file,model):
 	if (model == "unit"):
