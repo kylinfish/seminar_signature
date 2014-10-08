@@ -4,8 +4,6 @@ from django.http import HttpResponse,HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User,Group
-
-from django.contrib.auth.models import User,Group
 from django.contrib.auth.decorators import login_required
 from django.core import serializers #json serialize
 from django.utils import timezone
@@ -109,6 +107,13 @@ def std_search(req):
 		#return render_to_response('std_management.html',{'state':'method is not post. please try again.'})	
 		return render_to_response('std_search.html',{'state':'Please input student name'})
 
+@login_required(login_url='/login')
+def create(req):
+	s= student.objects.all()
+	context = {
+		'student':s
+	}
+	return render_to_response('create.html',context)
 
 """##############################################"""
 """-------------Operating Method-----------------"""
@@ -137,11 +142,14 @@ def timeDef(base_in,base_out,now):
 
 
 
+def ajax_up_fb(req):	#upload fb audio file first,and return audio url path !
+	name = req.POST['haha']
+	print name
+	return HttpResponse('not post')
+
 
 def scan_sign(req):
-	if req.method == 'POST':
-		card_id = req.POST['number']
-		unit_id = req.POST['unit_id']
+	if req.is_ajax():
 		try:
 			u = unit.objects.filter(pk=unit_id).get()
 			base_sigin = str(u.time.split("-")[0])
@@ -206,3 +214,49 @@ def particple_records(req):
 	return HttpResponse(data, content_type='application/json')
 	#else:
 	#	return HttpResponse("error")
+
+def commit_fb(req):
+	if req.is_ajax():
+		card_id =req.POST['number']
+		unit_id =req.POST['unit']
+		vertify_user =int(req.POST['user'])
+		unit_id =10
+		u = unit.objects.filter(pk=unit_id).get()
+		base_sigin = str(u.time.split("-")[0])
+		base_sigout = str(u.time.split("-")[1])
+		#s_exist = student.objects.filter(card=card_id).exists()
+		now = datetime.datetime.today()
+		sign_state = timeDef(base_sigin,base_sigout,now)
+		s_exist = student.objects.filter(pk=vertify_user).exists()
+		if s_exist:
+			s = student.objects.filter(pk=vertify_user).get()
+			try:
+				p = participate(
+					ref_unit = u, 
+					ref_std = s,
+					sig_time = now,
+					state = sign_state
+				).save()
+				s.card = card_id
+				s.save()
+			except :
+				return HttpResponse('Signature failed!')
+				#### change card number
+			try:
+				record =  participate.objects.all().order_by('-pk')[:1].get()
+				context={
+					'name':s.name,
+					'class':s.c_g,
+					'sid':s.s_id,
+					'pic':s.pic,
+					'timestamp':record.sig_time.strftime('%Y-%m-%d %H:%M'),
+					'state':record.state,
+				}
+				return HttpResponse(json.dumps(context),mimetype="application/json")
+			except : 
+				return HttpResponse('Get records error!!')
+			
+		else:
+			return HttpResponse('User does not exist.')
+
+	return HttpResponse('ajax error')
