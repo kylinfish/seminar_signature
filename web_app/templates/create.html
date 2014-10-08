@@ -133,7 +133,12 @@ function sign(btn,field){
         $("#profile_pic").attr('src',pic);
         $("#profile_user").html(msg['name']);
         $("#profile_s_id").html(msg['sid']);
-        $("#timestamp").html(msg['timestamp'].split('.')[0]);
+        hr = msg['timestamp'].split(' ')[1].split(":")[0]
+        mm = msg['timestamp'].split(' ')[1].split(":")[1]
+        hr = (parseInt(hr)+8).toString();
+        Fix = hr+":"+mm;
+        time = msg['timestamp'].split(' ')[0]+" "+ Fix
+        $("#timestamp").html(time);
         $("#state").html(msg['state']);
         showSuccessMsg("Signature Success!!");
       }
