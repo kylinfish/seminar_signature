@@ -30,8 +30,8 @@
                 <td class="hidden-xs">{{unit.time}}</td>
                 <td>{{unit.title}}</td>
                 <td>{{unit.speaker}}</td>
-                <td class="text-center"><button class="btn btn-success" href="signature/{{unit.pk}}">Signature</button> 
-                <button class="btn btn-primary" href="list/{{unit.pk}}">List</button></td>
+                <td class="text-center"><a href="signature/{{unit.pk}}"><button class="btn btn-success" >Signature</button> </a>
+                <a href="list/{{unit.pk}}"><button class="btn btn-primary" >List</button></a></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -50,7 +50,7 @@ $(function() {
         var txtDate = Date.parse(time);
         if (currDate > txtDate) {
           $(val).parent().css("color","#5cb85c") ;
-          $(val).siblings('td').eq(3).children('button').eq(0).addClass("disabled")
+          $(val).siblings('td').eq(3).children('a').children('button').eq(0).addClass("disabled")
         } else if (currDate == txtDate){
             $(val).parent().css("color","#F2CC37") ;
         }
