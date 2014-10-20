@@ -26,15 +26,12 @@
         <tbody>
             {% for unit in list %}
             <tr>
-                {%if unit.pub_date < now %}
-                aqeqwe
-                {%endif %}
                 <td class="dateCheck">{{unit.pub_date|date:"m / d"}}</td>
                 <td class="hidden-xs">{{unit.time}}</td>
                 <td>{{unit.title}}</td>
                 <td>{{unit.speaker}}</td>
-                <td class="text-center"><a class="btn btn-success" href="signature/{{unit.pk}}">Signature</a> 
-                <a class="btn btn-primary" href="list/{{unit.pk}}">List</a></td>
+                <td class="text-center"><button class="btn btn-success" href="signature/{{unit.pk}}">Signature</button> 
+                <button class="btn btn-primary" href="list/{{unit.pk}}">List</button></td>
             </tr>
             {% endfor %}
         </tbody>
@@ -52,9 +49,11 @@ $(function() {
         time ="2014/"+time.replace(" / ","/");  
         var txtDate = Date.parse(time);
         if (currDate > txtDate) {
-          $(val).parent().css("color","#F2CC37") ;
-        } else if (currDate == txtDate)
-            $(val).parent().css("color","#12EF2F") ;
+          $(val).parent().css("color","#5cb85c") ;
+          $(val).siblings('td').eq(3).children('button').eq(0).addClass("disabled")
+        } else if (currDate == txtDate){
+            $(val).parent().css("color","#F2CC37") ;
+        }
     });
 });
 </script> 
