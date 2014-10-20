@@ -179,13 +179,6 @@ def scan_sign(req):
 					sign_state = timeDef(base_sigin,base_sigout,now)
 					p = participate(ref_unit = u , ref_std = s,sig_time = now,state = sign_state)
 					p.save()
-					p = participate(
-						ref_unit = u, 
-						ref_std = s,
-						sig_time = now,
-						state = sign_state
-					).save()
-
 				except:
 					return HttpResponse('Student id signature failed')		
 			else:

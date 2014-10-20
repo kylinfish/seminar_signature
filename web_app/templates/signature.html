@@ -53,7 +53,7 @@
           <div class="input-group">
               <img class="icon" src="{% static 'icon/p7.png' %}">     
              <input class="btn btn-lg" id="number" type="text" placeholder="card number" required autofocus>
-             <button class="btn btn-info btn-lg" type="submit">Signature</button>
+             <button id="btn_Submit" class="btn btn-info btn-lg" type="submit">Signature</button>
           </div>
           </form>
         </div>
@@ -101,7 +101,7 @@ $(function() {
 function showSuccessMsg(text){
   $("#success-message").text(text);
   $('#success-message').fadeIn( "slow", function(){});
-  $('#success-message').delay(1500).fadeOut( "slow", function() {
+  $('#success-message').delay(800).fadeOut( "slow", function() {
   });
 }
 
@@ -113,6 +113,7 @@ function showErrorMsg(text){
 }
 
 function sign(btn,field){
+  $('#btn_Submit').toggleClass("disabled");
   $.ajax({
     url: "/scan_sign" , 
     type: 'POST', 
@@ -144,11 +145,13 @@ function sign(btn,field){
         showErrorMsg(msg);  
         resetField();
       }
+      $('#btn_Submit').toggleClass("disabled");
     },
     error: function(msg) {
       $("#number").val("");
       showErrorMsg(msg);
       resetField();
+      $('#btn_Submit').toggleClass("disabled");
     }
   });
 }
