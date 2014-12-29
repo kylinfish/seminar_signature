@@ -1,0 +1,79 @@
+
+{% extends 'base.html' %} 
+{% block content %}
+{% load staticfiles %}  
+<style type="text/css">
+    thead{
+        color:#fff;
+        background-color: rgba(255,255,255,0.4);
+    }
+    tbody{
+        color:#EAFF6F;
+        background-color: rgba(255,255,255,0.2);
+    }
+     .paginate_button >a{
+        color:#3366FF;
+
+    }
+    .lastRecord{
+        color:rgba(114, 5, 216, 0.89);
+        font-size:18px;
+        text-align: center;
+    }
+    
+</style>
+    <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.css">
+    <div class="container">
+        <section>
+            <h1>出缺席紀錄總統計</h1>
+            <br>
+            <p>每週欄位(1,1)，代表簽到跟簽退皆有紀錄，若其中一為0代表有一次沒有刷卡成功。</p>
+            <p>出席欄位加總為：該週皆有簽到簽退者</p>
+        </section>
+        {% if list %}
+        <table id="example" class="table table-bordered" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>StudentID</th>
+                {% for u in units%}
+                <th>{{u.id}}</th>
+                {% endfor %}
+                <th>出席</th>
+            </tr>
+        </thead>
+ 
+        <tbody>
+          {% for std, record in list.items%}
+            <tr>
+                <td>{{std.s_id}} {{std.name}}</td>
+                {% for r in record %}
+                    {% if forloop.last %}
+                        <td class="lastRecord"><span >{{r}}</span></td>
+                    {% else %}
+                        <td>{{r}}</td>
+                    {% endif %}
+                {% endfor %}
+            </tr>
+           {% endfor %}
+        </tbody>
+        {% else %}
+        <div class="profile">
+        <h1>No records found.</h1>
+    </div>
+        {% endif %}
+    </table>
+        </div>
+    </div>
+
+    </div> <!-- /container -->
+<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="//cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+
+  <script type="text/javascript">
+  $(document).ready(function() {
+    $('#example').dataTable();
+} );
+
+  </script>
+{% endblock %}

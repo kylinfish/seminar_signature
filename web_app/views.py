@@ -16,9 +16,9 @@ import csv,json
 # Create your views here.
 
 
-"""##############################################"""
-"""--------------Page render---------------------"""
-"""##############################################"""
+"""##############################################################################"""
+"""------------------------------Page render-------------------------------------"""
+"""##############################################################################"""
 def auth_vertify(request):
 	if request.method == 'POST':
 		user = authenticate(username=request.POST['username'], password=request.POST['password'])
@@ -115,10 +115,44 @@ def create(req):
 	}
 	return render_to_response('create.html',context)
 
-"""##############################################"""
-"""-------------Operating Method-----------------"""
-"""##############################################"""
+@login_required(login_url='/login')
+def visualize(req):
+	units = unit.objects.all()
+	std = student.objects.all().order_by("-s_id")
+	result = {}
+	for s in std:
+		record = []
+		participateTimes = 0
+		for u in units:
+			success = 0
+			a = participate.objects.filter(ref_unit=u,ref_std=s,state="signin")
+			if a.exists() :
+				sin = a.count()
+				success = success + 1
+			else:
+				sin = 0
+			b = participate.objects.filter(ref_unit=u,ref_std=s,state="signout")
+			if b.exists() : 
+				sout = b.count()
+				success = success + 1
+			else:
+				sout = 0
+			if success == 2:
+				participateTimes = participateTimes + 1
+			record.append((sin,sout))
+		record.append(participateTimes)
+		result[s]=record
+	context = {
+		'list':result,
+		'units':units
+	}
+	return render_to_response('visualize.html',context)
 
+
+
+"""##############################################################################"""
+"""------------------------------Operating Method--------------------------------"""
+"""##############################################################################"""
 def timeDef(base_in,base_out,now):
 	now = datetime.datetime.today()
 	delta_now = datetime.timedelta(hours=now.hour,minutes=now.minute)

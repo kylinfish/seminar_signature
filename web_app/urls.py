@@ -14,5 +14,6 @@ urlpatterns = patterns('',
     url(r'^dblist', views.dblist, name='dblist'),
     url(r'^particple_records', views.particple_records, name='particple_records'),
     url(r'^create', views.create, name='create'),
-    url(r'commit_fb', views.commit_fb, name='commit_fb'),
+    url(r'^commit_fb', views.commit_fb, name='commit_fb'),
+    url(r'^visualize', views.visualize, name='visualize'),
 )
