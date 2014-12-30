@@ -17,6 +17,10 @@
         width:170px;
         height:170px;
     }
+    .modal-body{
+	    font-size:150px;
+        margin-right:80%;
+	}
 </style>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.css">
     <div class="container">
@@ -97,7 +101,20 @@
             </a>
         </div>
 
-        
+        <div class="modal-body hidden" id="antimate_gif" >
+        	<div class="container">
+			    <div class="row text-center">
+			        <i class="fa fa-refresh fa-spin fa-6" ></i>
+                	<h4> Processing... </h4>
+			    </div>
+			  </div>
+         </div>
     </div> <!-- /container -->
-
+	<script type="text/javascript">
+		$('a').click(function(){
+            setTimeout(function(){
+                $("#antimate_gif").toggleClass("hidden");
+            },2000);
+		});
+	</script>>
 {% endblock %}
