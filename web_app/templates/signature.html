@@ -88,7 +88,7 @@
 <script type="text/javascript">
 var url = window.location.toString();
 var unit ="";
-
+var currentSTD = "";
 $(function() {
   url =url.replace(/.*signature\//, '');
   unit = url.replace('\/',"");
@@ -108,52 +108,60 @@ function showSuccessMsg(text){
 function showErrorMsg(text){
   $("#error-message").text(text);
   $('#error-message').fadeIn( "slow", function(){});
-  $('#error-message').delay(2500).fadeOut( "slow", function() {
+  $('#error-message').delay(1000).fadeOut( "slow", function() {
   });
 }
 
 function sign(btn,field){
+  var user = $("#number").val();
   $('#btn_Submit').toggleClass("disabled");
-  $.ajax({
-    url: "/scan_sign" , 
-    type: 'POST', 
-    data: {
-      'unit': unit,
-      'card_id': $("#number").val(),
-    },
-    success: function(msg) {
-      console.log(msg);
-      $("#number").val("");
-      if (typeof(msg)=='object'){
-        $("#profile_class").html(msg['class']);
-        if (msg['pic']!=null)
-          pic = "/static/media/default.jpg";
-        else
-          pic ="/static/media/"+msg['pic'];
-        $("#profile_pic").attr('src',pic);
-        $("#profile_user").html(msg['name']);
-        $("#profile_s_id").html(msg['sid']);
-        hr = msg['timestamp'].split(' ')[1].split(":")[0]
-        mm = msg['timestamp'].split(' ')[1].split(":")[1]
-        hr = (parseInt(hr)+8).toString();
-        Fix = hr+":"+mm;
-        time = msg['timestamp'].split(' ')[0]+" "+ Fix
-        $("#timestamp").html(time);
-        $("#state").html(msg['state']);
-        showSuccessMsg("Signature Success!!");
-      }else{
-        showErrorMsg(msg);  
+  if (currentSTD != $("#number").val()){
+    $.ajax({
+      url: "/scan_sign" , 
+      type: 'POST', 
+      data: {
+        'unit': unit,
+        'card_id': user,
+      },
+      success: function(msg) {
+        console.log(msg);
+        $("#number").val("");
+        if (typeof(msg)=='object'){
+          $("#profile_class").html(msg['class']);
+          if (msg['pic']!=null)
+            pic = "/static/media/default.jpg";
+          else
+            pic ="/static/media/"+msg['pic'];
+          $("#profile_pic").attr('src',pic);
+          $("#profile_user").html(msg['name']);
+          $("#profile_s_id").html(msg['sid']);
+          hr = msg['timestamp'].split(' ')[1].split(":")[0]
+          mm = msg['timestamp'].split(' ')[1].split(":")[1]
+          hr = (parseInt(hr)+8).toString();
+          Fix = hr+":"+mm;
+          time = msg['timestamp'].split(' ')[0]+" "+ Fix
+          $("#timestamp").html(time);
+          $("#state").html(msg['state']);
+          currentSTD = user;
+          showSuccessMsg("Signature Success!!");
+        }else{
+          showErrorMsg(msg);  
+          resetField();
+        }
+        $('#btn_Submit').toggleClass("disabled");
+      },
+      error: function(msg) {
+        $("#number").val("");
+        showErrorMsg(msg);
         resetField();
+        $('#btn_Submit').toggleClass("disabled");
       }
-      $('#btn_Submit').toggleClass("disabled");
-    },
-    error: function(msg) {
-      $("#number").val("");
-      showErrorMsg(msg);
-      resetField();
-      $('#btn_Submit').toggleClass("disabled");
-    }
-  });
+    });
+  }else{
+    msg = "剛剛不是刷過了嗎？"
+    showErrorMsg(msg);  
+    $("#number").val("");
+  }
 }
 
 function resetField(){

@@ -46,7 +46,8 @@ var currDate = Date.parse((new Date()).toDateString());
 $(function() {
     $('.dateCheck').each(function(e,val){
         var time = $(val).html();
-        time ="2014/"+time.replace(" / ","/");  
+        var thisYear = new Date().getFullYear();
+        time = thisYear + time.replace(" / ","/");  
         var txtDate = Date.parse(time);
         if (currDate > txtDate) {
           $(val).parent().css("color","#5cb85c") ;
