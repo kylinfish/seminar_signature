@@ -105,7 +105,7 @@ def std_search(req):
 		return render_to_response('std_search.html', {'state':'no any records!!'} )
 	else:
 		#return render_to_response('std_management.html',{'state':'method is not post. please try again.'})	
-		return render_to_response('std_search.html',{'state':'Please input student name'})
+		return render_to_response('std_search.html',{'state':'請輸入學生姓名，或者學號'})
 
 @login_required(login_url='/login')
 def create(req):

@@ -16,6 +16,15 @@
 
     }
 </style>
+<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+<script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" language="javascript" src="//cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function() {
+        $('#example').dataTable();
+    });
+</script>
     <link rel="stylesheet" type="text/css" href="//cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.css">
     <div class="container">
         {% if list %}
@@ -28,7 +37,6 @@
                 <th>State</th>
             </tr>
         </thead>
- 
         <tbody>
           {% for p in list%}
             <tr>
@@ -49,14 +57,5 @@
     </div>
 
     </div> <!-- /container -->
-<script type="text/javascript" language="javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-<script type="text/javascript" language="javascript" src="//cdn.datatables.net/1.10.2/js/jquery.dataTables.min.js"></script>
-<script type="text/javascript" language="javascript" src="//cdn.datatables.net/plug-ins/a5734b29083/integration/bootstrap/3/dataTables.bootstrap.js"></script>
 
-  <script type="text/javascript">
-  $(document).ready(function() {
-    $('#example').dataTable();
-} );
-
-  </script>
 {% endblock %}
