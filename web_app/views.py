@@ -109,7 +109,7 @@ def std_search(req):
 
 @login_required(login_url='/login')
 def create(req):
-	s= student.objects.all()
+	s= student.objects.all().order_by("s_id")
 	context = {
 		'student':s
 	}
@@ -272,47 +272,21 @@ def particple_records(req):
 	#	return HttpResponse("error")
 
 def commit_fb(req):
+	#### change card number
+
 	if req.is_ajax():
 		card_id =req.POST['number']
-		unit_id =req.POST['unit']
-		vertify_user =int(req.POST['user'])
-		unit_id =10
-		u = unit.objects.filter(pk=unit_id).get()
-		base_sigin = str(u.time.split("-")[0])
-		base_sigout = str(u.time.split("-")[1])
-		#s_exist = student.objects.filter(card=card_id).exists()
-		now = datetime.datetime.today()
-		sign_state = timeDef(base_sigin,base_sigout,now)
-		s_exist = student.objects.filter(pk=vertify_user).exists()
+		std =int(req.POST['user'])
+		s_exist = student.objects.filter(pk=std).exists()
 		if s_exist:
-			s = student.objects.filter(pk=vertify_user).get()
+			s = student.objects.filter(pk=std).get()			
 			try:
-				p = participate(
-					ref_unit = u, 
-					ref_std = s,
-					sig_time = now,
-					state = sign_state
-				).save()
 				s.card = card_id
 				s.save()
 			except :
-				return HttpResponse('Signature failed!')
-				#### change card number
-			try:
-				record =  participate.objects.all().order_by('-pk')[:1].get()
-				context={
-					'name':s.name,
-					'class':s.c_g,
-					'sid':s.s_id,
-					'pic':s.pic,
-					'timestamp':record.sig_time.strftime('%Y-%m-%d %H:%M'),
-					'state':record.state,
-				}
-				return HttpResponse(json.dumps(context),mimetype="application/json")
-			except : 
-				return HttpResponse('Get records error!!')
-			
+				return HttpResponse('update error by this student user')
+			return HttpResponse('success')
 		else:
 			return HttpResponse('User does not exist.')
-
-	return HttpResponse('ajax error')
+	else:
+		return HttpResponse('ajax error')
