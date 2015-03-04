@@ -11,7 +11,7 @@
 
 <div class="container">
     <div class="col-xs-12 col-lg-12 ">
-    <h1 class="page-header"><img class="icon" src="{% static 'icon/p6.png'%}"> Seminar Course</h1>
+    <h1 class="page-header"><img class="icon" src="{% static 'icon/p6.png'%}"> Seminar 課程</h1>
     {% if list %}
     <table class="table ">
     <thead>
@@ -47,8 +47,10 @@ $(function() {
     $('.dateCheck').each(function(e,val){
         var time = $(val).html();
         var thisYear = new Date().getFullYear();
-        time = thisYear + time.replace(" / ","/");  
+        time = thisYear +" / "+ time.replace(" / ","/");  
+        console.log(time);
         var txtDate = Date.parse(time);
+        console.log(currDate+"__"+txtDate);
         if (currDate > txtDate) {
           $(val).parent().css("color","#5cb85c") ;
           $(val).siblings('td').eq(3).children('a').children('button').eq(0).addClass("disabled")
