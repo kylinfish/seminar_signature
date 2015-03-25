@@ -40,6 +40,7 @@
   }
   </style>
   <link rel="stylesheet" type="text/css" href="{% static 'css/clock.css'%}">  
+  <link rel="stylesheet" type="text/css" href="{% static 'css/bootstrap-switch.min.css'%}">  
     <div id="clock" class="light">
       <div class="display">
         <div class="ampm"></div>
@@ -56,6 +57,10 @@
              <button id="btn_Submit" class="btn btn-info btn-lg" type="submit">Signature</button>
           </div>
           </form>
+          <div class="pull-right" style="margin-bottom:15px;">
+          <span style="font-size:15px;">請記得選取：</span>
+          <input type="checkbox" name="my-checkbox" checked>
+          </div>
         </div>
       </div>
       <div class="row">
@@ -85,17 +90,37 @@
     </div> <!-- /container -->
 <script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.0.0/moment.min.js"></script>
 <script type="text/javascript" src="{% static 'js/clock.js'%}"></script>
+<script type="text/javascript" src="{% static 'js/bootstrap-switch.min.js'%}"></script>
 <script type="text/javascript">
 var url = window.location.toString();
 var unit ="";
 var currentSTD = "";
+var scan_state = true; //true = signin , false = signout
 $(function() {
+  $("[name='my-checkbox']").bootstrapSwitch({
+      onText: "Signin",
+      offText: "Signout",
+      offColor:'success',
+      state: scan_state
+  });
+  $('input[name="my-checkbox"]').on('switchChange.bootstrapSwitch', function(event, state) {
+    scan_state = state;
+  });
   url =url.replace(/.*signature\//, '');
   unit = url.replace('\/',"");
   $('form').on('submit', function (e) {
     e.preventDefault();
     sign();
   });
+
+  $('#radioBtn a').on('click', function(){
+    var sel = $(this).data('title');
+    var tog = $(this).data('toggle');
+    $('#'+tog).prop('value', sel);
+    
+    $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
+    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
+  })
 });
 
 function showSuccessMsg(text){
@@ -115,6 +140,8 @@ function showErrorMsg(text){
 function sign(btn,field){
   var user = $("#number").val();
   $('#btn_Submit').toggleClass("disabled");
+  var state = "";
+  (scan_state==true)?state="signin" : state="signout";
   if (currentSTD != $("#number").val()){
     $.ajax({
       url: "/scan_sign" , 
@@ -122,6 +149,7 @@ function sign(btn,field){
       data: {
         'unit': unit,
         'card_id': user,
+        'state': state,
       },
       success: function(msg) {
         console.log(msg);

@@ -41,15 +41,21 @@ def index(req):
 
 @login_required(login_url='/login')
 def signature(req,unit_id):
-	s_exist = participate.objects.filter(ref_unit=unit_id).exists()
-	if s_exist:
-		p = participate.objects.all().order_by("-sig_time")[:1].get()
-		u = unit.objects.filter(pk=p.ref_unit.pk).get()
-		s = student.objects.filter(pk=p.ref_std.pk).get()
-		context = {'timestamp':p.sig_time,'s_id':s.s_id,'class':s.c_g,'name':s.name,'pic':s.pic}
+	u = unit.objects.filter(pk=unit_id).get()
+	today =  datetime.datetime.now().date()
+	unit_date = u.pub_date.date()
+	if today == unit_date:
+		s_exist = participate.objects.filter(ref_unit=unit_id).exists()
+		if s_exist:
+			p = participate.objects.all().order_by("-sig_time")[:1].get()
+			s = student.objects.filter(pk=p.ref_std.pk).get()
+			context = {'timestamp':p.sig_time,'s_id':s.s_id,'class':s.c_g,'name':s.name,'pic':s.pic}
+		else:
+			context ={'state': " No records found"}
+		return render(req,"signature.html",context )
 	else:
-		context ={'state': " No records found"}
-	return render(req,"signature.html",context )
+		context = {'course':u.title,'date':u.pub_date}
+		return render(req,"403.html",context)
 
 @login_required(login_url='/login')
 def list(req,unit_id):
@@ -153,6 +159,7 @@ def visualize(req):
 """##############################################################################"""
 """------------------------------Operating Method--------------------------------"""
 """##############################################################################"""
+### ignore this function
 def timeDef(base_in,base_out,now):
 	now = datetime.datetime.today()
 	delta_now = datetime.timedelta(hours=now.hour,minutes=now.minute)
@@ -186,6 +193,7 @@ def scan_sign(req):
 	if req.is_ajax():
 		unit_id =req.POST['unit']
 		card_id =req.POST['card_id']
+		sign_state =req.POST['state']
 		u = unit.objects.filter(pk=unit_id).get()
 		base_sigin = str(u.time.split("-")[0])
 		base_sigout = str(u.time.split("-")[1])
@@ -194,7 +202,6 @@ def scan_sign(req):
 		if s_exist:
 			s = student.objects.filter(card=card_id).get()
 			try:
-				sign_state = timeDef(base_sigin,base_sigout,now)
 				p = participate(ref_unit = u , ref_std = s,sig_time = now,state = sign_state)
 				p.save()
 			except :
@@ -204,7 +211,6 @@ def scan_sign(req):
 			if s_exist2:
 				try:
 					s = student.objects.filter(s_id__iexact=card_id).get()
-					sign_state = timeDef(base_sigin,base_sigout,now)
 					p = participate(ref_unit = u , ref_std = s,sig_time = now,state = sign_state)
 					p.save()
 				except:

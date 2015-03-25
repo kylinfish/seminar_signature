@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   	{% load staticfiles %}	
+    <link rel="stylesheet" type="text/css" href="{% static '/static/css/bootstrap.css' %}" />
+    <title>403</title>
+  </head>
+  <style type="text/css">
+    body { background-image: url({% static '/static/img/bg.png' %});}
+    .error-template {padding: 40px 15px;text-align: center;}
+    .error-actions {margin-top:15px;margin-bottom:15px;}
+    .error-actions .btn { margin-right:10px; }
+  </style>
+  <body>
+    <div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="error-template">
+                <h1 class="text-danger">Oops!!</h1>
+                <h2 class="text-danger">Sign Denied</h2>
+                <img src="{% static '/static/icon/p5.ico'%}">
+                <div class="error-details">
+                    <h4 class="text-info">Selected : {{date|date:"m / d"}}, {{course}}  </h4>
+                </div>
+                <div class="error-details">
+                    <h3 class="text-warning">Sorry, Please select right course to do signature. </h3>
+                </div>
+                <div class="error-actions">
+                    <a href="/" class="btn btn-primary btn-lg"><span class="glyphicon glyphicon-share-alt"></span> 回上一頁 </a>
+                    <!-- <a href="" class="btn btn-default btn-lg" disabled><span class="glyphicon glyphicon-envelope"></span> Contact Support </a> -->
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div> <!-- /container -->
+  </body>
+</html>
