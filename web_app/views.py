@@ -10,7 +10,6 @@ from django.utils import timezone
 from web_app.form import uploadForm
 from web_app.models import unit,participate,student
 from datetime import datetime,timedelta
-import datetime
 import time
 import csv,json
 # Create your views here.
@@ -42,8 +41,8 @@ def index(req):
 @login_required(login_url='/login')
 def signature(req,unit_id):
 	u = unit.objects.filter(pk=unit_id).get()
-	today =  str(datetime.datetime.now().date())
-	unit_date = str(u.pub_date.date())
+	today = datetime.strftime(datetime.now(), '%Y-%m-%d')
+	unit_date = datetime.strftime(u.pub_date.date(), '%Y-%m-%d')
 	if today == unit_date:
 		s_exist = participate.objects.filter(ref_unit=unit_id).exists()
 		if s_exist:
