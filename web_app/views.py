@@ -10,6 +10,7 @@ from django.utils import timezone
 from web_app.form import uploadForm
 from web_app.models import unit,participate,student
 from datetime import datetime,timedelta
+import datetime as Dtime
 import time
 import csv,json
 # Create your views here.
@@ -34,8 +35,22 @@ def auth_vertify(request):
 
 @login_required(login_url='/login')
 def index(req):
+	#add an new unit 
+	state=""
+	if req.method=="POST":
+		dd = req.POST['date']
+		time = req.POST['time']
+		topic = req.POST['topic']
+		speaker = req.POST['speaker']
+		thisYear = Dtime.datetime.today().year
+		date = str(thisYear)+ "-"+dd.replace("/","-")
+		try:
+			d = Dtime.datetime.strptime(date, '%Y-%m-%d')
+			unit(title=topic,speaker=speaker, pub_date=d,time=time).save()
+		except:
+			state= "plz check ur data fromat before submission!!"
 	unit_list = unit.objects.all()
-	context = {'list':unit_list}
+	context = {'list':unit_list,'state':state}
 	return render(req,"index.html",context)
 
 @login_required(login_url='/login')
@@ -160,7 +175,7 @@ def visualize(req):
 """##############################################################################"""
 ### ignore this function
 def timeDef(base_in,base_out,now):
-	now = datetime.datetime.today()
+	now = Dtime.datetime.today()
 	delta_now = datetime.timedelta(hours=now.hour,minutes=now.minute)
 
 	delta_in = datetime.timedelta(hours=int(base_in.split(":")[0]),minutes=int(base_in.split(":")[1]))
@@ -181,11 +196,16 @@ def timeDef(base_in,base_out,now):
 		return "warning !!! "
 
 
-
-def ajax_up_fb(req):	#upload fb audio file first,and return audio url path !
-	name = req.POST['haha']
-	print name
-	return HttpResponse('not post')
+def remove_unit(req):
+	state="Delete Success ~ :D"
+	try:
+		pk = req.POST['pk']
+		unit.objects.filter(pk=pk).delete()
+	except:
+		state="Delete Error!!"
+	unit_list = unit.objects.all()
+	context = {'list':unit_list,'state':state}
+	return render(req,"index.html",context)
 
 
 def scan_sign(req):
@@ -196,7 +216,7 @@ def scan_sign(req):
 		u = unit.objects.filter(pk=unit_id).get()
 		base_sigin = str(u.time.split("-")[0])
 		base_sigout = str(u.time.split("-")[1])
-		now = datetime.datetime.today()
+		now = Dtime.datetime.today()
 		s_exist = student.objects.filter(card=card_id).exists()
 		if s_exist:
 			s = student.objects.filter(card=card_id).get()
