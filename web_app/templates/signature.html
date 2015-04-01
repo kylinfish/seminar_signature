@@ -58,8 +58,7 @@
           </div>
           </form>
           <div class="pull-right" style="margin-bottom:15px;">
-          <span style="font-size:15px;">請記得選取：</span>
-          <input type="checkbox" name="my-checkbox" checked>
+          <span style="font-size:15px;">{{state_change}}</span>
           </div>
         </div>
       </div>
@@ -97,15 +96,7 @@ var unit ="";
 var currentSTD = "";
 var scan_state = true; //true = signin , false = signout
 $(function() {
-  $("[name='my-checkbox']").bootstrapSwitch({
-      onText: "Signin",
-      offText: "Signout",
-      offColor:'success',
-      state: scan_state
-  });
-  $('input[name="my-checkbox"]').on('switchChange.bootstrapSwitch', function(event, state) {
-    scan_state = state;
-  });
+
   url =url.replace(/.*signature\//, '');
   unit = url.replace('\/',"");
   $('form').on('submit', function (e) {
@@ -113,14 +104,6 @@ $(function() {
     sign();
   });
 
-  $('#radioBtn a').on('click', function(){
-    var sel = $(this).data('title');
-    var tog = $(this).data('toggle');
-    $('#'+tog).prop('value', sel);
-    
-    $('a[data-toggle="'+tog+'"]').not('[data-title="'+sel+'"]').removeClass('active').addClass('notActive');
-    $('a[data-toggle="'+tog+'"][data-title="'+sel+'"]').removeClass('notActive').addClass('active');
-  })
 });
 
 function showSuccessMsg(text){

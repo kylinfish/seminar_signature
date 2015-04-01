@@ -10,7 +10,6 @@ from django.utils import timezone
 from web_app.form import uploadForm
 from web_app.models import unit,participate,student
 from datetime import datetime,timedelta
-import datetime
 import time
 import csv,json
 # Create your views here.
@@ -42,16 +41,18 @@ def index(req):
 @login_required(login_url='/login')
 def signature(req,unit_id):
 	u = unit.objects.filter(pk=unit_id).get()
-	today =  str(datetime.datetime.now().date())
+	today =  str(datetime.now().date())
 	unit_date = str(u.pub_date.date())
 	if today == unit_date:
+		x = str(int(str(u.time).split("-")[0].split(":")[0])+1)
 		s_exist = participate.objects.filter(ref_unit=unit_id).exists()
+
 		if s_exist:
 			p = participate.objects.all().order_by("-sig_time")[:1].get()
 			s = student.objects.filter(pk=p.ref_std.pk).get()
-			context = {'timestamp':p.sig_time,'s_id':s.s_id,'class':s.c_g,'name':s.name,'pic':s.pic}
+			context = {'timestamp':p.sig_time,'s_id':s.s_id,'class':s.c_g,'name':s.name,'pic':s.pic,"state_change":x+":00 之後算簽退"}
 		else:
-			context ={'state': " No records found"}
+			context ={'state': " No records found","state_change":x+":00,之後算簽退"}
 		return render(req,"signature.html",context )
 	else:
 		context = {'course':u.title,'date':u.pub_date}
@@ -160,26 +161,18 @@ def visualize(req):
 """------------------------------Operating Method--------------------------------"""
 """##############################################################################"""
 ### ignore this function
-def timeDef(base_in,base_out,now):
-	now = datetime.datetime.today()
-	delta_now = datetime.timedelta(hours=now.hour,minutes=now.minute)
-
-	delta_in = datetime.timedelta(hours=int(base_in.split(":")[0]),minutes=int(base_in.split(":")[1]))
-	delta_out = datetime.timedelta(hours=int(base_out.split(":")[0]),minutes=int(base_out.split(":")[1]))
+def timeDef(base_in, now):
+	delta_now = timedelta(hours=now.hour,minutes=now.minute)
+	base_in = base_in.split("-")[0]
+	delta_in = timedelta(hours=int(base_in.split(":")[0])+1)
+	print delta_in
+	print delta_now
 	#sigin in check :
-	timecheck_in = str(abs(delta_now - delta_in)).split(":")
-	timecheck_out = str(abs(delta_now - delta_out)).split(":")
-	check = False
-	if int(timecheck_in[0])<=0:
-		if int(timecheck_in[1])<=60:
-			check = True
-			return "signin"
-	if int(timecheck_out[0])<=0:
-		if int(timecheck_out[1])<=60:
-			check = True
-			return "signout"
-	if check == False:
-		return "warning !!! "
+	diff =  str(delta_now - delta_in).split(":")[0]
+	if diff >0:
+		return "signout"
+	else:
+		return "signin"
 
 
 
@@ -193,16 +186,16 @@ def scan_sign(req):
 	if req.is_ajax():
 		unit_id =req.POST['unit']
 		card_id =req.POST['card_id']
-		sign_state =req.POST['state']
 		u = unit.objects.filter(pk=unit_id).get()
 		base_sigin = str(u.time.split("-")[0])
 		base_sigout = str(u.time.split("-")[1])
 		now = datetime.today()
+		state = timeDef(u.time, now)
 		s_exist = student.objects.filter(card=card_id).exists()
 		if s_exist:
 			s = student.objects.filter(card=card_id).get()
 			try:
-				p = participate(ref_unit = u , ref_std = s,sig_time = now,state = sign_state)
+				p = participate(ref_unit = u , ref_std = s,sig_time = now,state = state)
 				p.save()
 			except :
 				return HttpResponse('Card id signature failed')		
@@ -211,7 +204,7 @@ def scan_sign(req):
 			if s_exist2:
 				try:
 					s = student.objects.filter(s_id__iexact=card_id).get()
-					p = participate(ref_unit = u , ref_std = s,sig_time = now,state = sign_state)
+					p = participate(ref_unit = u , ref_std = s,sig_time = now,state = state)
 					p.save()
 				except:
 					return HttpResponse('Student id signature failed')		
