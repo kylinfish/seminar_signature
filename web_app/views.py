@@ -34,15 +34,29 @@ def auth_vertify(request):
 
 @login_required(login_url='/login')
 def index(req):
+	#add an new unit 
+	state=""
+	if req.method=="POST":
+		dd = req.POST['date']
+		time = req.POST['time']
+		topic = req.POST['topic']
+		speaker = req.POST['speaker']
+		thisYear = datetime.today().year
+		date = str(thisYear)+ "-"+dd.replace("/","-")
+		try:
+			d = datetime.strptime(date, '%Y-%m-%d')
+			unit(title=topic,speaker=speaker, pub_date=d,time=time).save()
+		except:
+			state= "plz check ur data fromat before submission!!"
 	unit_list = unit.objects.all()
-	context = {'list':unit_list}
+	context = {'list':unit_list,'state':state}
 	return render(req,"index.html",context)
 
 @login_required(login_url='/login')
 def signature(req,unit_id):
 	u = unit.objects.filter(pk=unit_id).get()
-	today =  str(datetime.now().date())
-	unit_date = str(u.pub_date.date())
+	today = datetime.strftime(datetime.now(), '%Y-%m-%d')
+	unit_date = datetime.strftime(u.pub_date.date(), '%Y-%m-%d')
 	if today == unit_date:
 		x = str(int(str(u.time).split("-")[0].split(":")[0])+1)
 		s_exist = participate.objects.filter(ref_unit=unit_id).exists()
@@ -165,8 +179,6 @@ def timeDef(base_in, now):
 	delta_now = timedelta(hours=now.hour,minutes=now.minute)
 	base_in = base_in.split("-")[0]
 	delta_in = timedelta(hours=int(base_in.split(":")[0])+1)
-	print delta_in
-	print delta_now
 	#sigin in check :
 	diff =  str(delta_now - delta_in).split(":")[0]
 	if diff >0:
@@ -175,11 +187,16 @@ def timeDef(base_in, now):
 		return "signin"
 
 
-
-def ajax_up_fb(req):	#upload fb audio file first,and return audio url path !
-	name = req.POST['haha']
-	print name
-	return HttpResponse('not post')
+def remove_unit(req):
+	state="Delete Success ~ :D"
+	try:
+		pk = req.POST['pk']
+		unit.objects.filter(pk=pk).delete()
+	except:
+		state="Delete Error!!"
+	unit_list = unit.objects.all()
+	context = {'list':unit_list,'state':state}
+	return render(req,"index.html",context)
 
 
 def scan_sign(req):

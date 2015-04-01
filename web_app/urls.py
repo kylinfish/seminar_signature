@@ -16,4 +16,8 @@ urlpatterns = patterns('',
     url(r'^create', views.create, name='create'),
     url(r'^commit_fb', views.commit_fb, name='commit_fb'),
     url(r'^visualize', views.visualize, name='visualize'),
+    
+
+    url(r'^remove_unit', views.remove_unit, name='remove_unit'),
+
 )
