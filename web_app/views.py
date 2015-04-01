@@ -197,7 +197,7 @@ def scan_sign(req):
 		u = unit.objects.filter(pk=unit_id).get()
 		base_sigin = str(u.time.split("-")[0])
 		base_sigout = str(u.time.split("-")[1])
-		now = datetime.datetime.today()
+		now = datetime.today()
 		s_exist = student.objects.filter(card=card_id).exists()
 		if s_exist:
 			s = student.objects.filter(card=card_id).get()
