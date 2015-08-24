@@ -1,0 +1,271 @@
+
+{% extends 'base.html' %} 
+{% block content %}
+{% load staticfiles %}
+<style type="text/css">
+	input.btn.btn-lg,
+	input.btn.btn-lg:focus {
+	  outline: none;
+	  width: 60%;
+	  height: 40px;
+	  border-top-right-radius: 0;
+	  border-bottom-right-radius: 0;
+	}
+	.input-group .btn {
+	  width: 40%;
+	  height: 40px;
+	  border-top-left-radius: 0;
+	  border-bottom-left-radius: 0;
+	}
+	.icon{
+	width:70px;
+	height:70px;
+	margin-left: -15px;
+	margin-right: 15px;
+	}
+	.dl-horizontal{
+		height:250px;
+	}
+	.table{
+	margin-top: 20px;
+	}
+
+	.nav-tabs > li.active > a, .nav-tabs > li.active > a:focus, .nav-tabs > li.active > a:hover { border-width: 0; }
+	.nav-tabs > li > a { border: none; color: #666; margin-left: 10px;}
+	.nav-tabs > li.active > a, .nav-tabs > li > a:hover { border: none; color: #4285F4 !important; background: transparent; }
+	.nav-tabs > li > a::after { content: ""; background: #4285F4; height: 5px; position: absolute; width: 100%; left: 0px; bottom: -1px; transition: all 250ms ease 0s; transform: scale(0); }
+	.nav-tabs > li.active > a::after, .nav-tabs > li:hover > a::after { transform: scale(1); }
+	.tab-pane { padding: 15px 0; }
+	.tab-content{padding: 20px; height:100%;}
+
+	.nav-tabs {background: #FFF none repeat scroll 0% 0%;}
+	/*.panelControlw {box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3); margin-bottom: 30px;padding:10px 10px 10px 20px; }*/
+	
+  </style>
+<div class="container">
+	<div class="row">
+    	<div class="col-md-12">
+			<!-- <div class="panelControl"> -->
+				<ul class="nav nav-tabs" role="tablist">
+				    <li role="presentation" class="active"><a href="#updateCard" aria-controls="updateCard" role="tab" data-toggle="tab">更新卡號</a></li>
+				    <li role="presentation" ><a href="#stdProfile" aria-controls="stdProfile" role="tab" data-toggle="tab">名單管理</a></li>
+				</ul>
+
+				<!-- Tab panes -->
+				<div class="tab-content row">
+
+				    <div role="tabpanel" class="tab-pane active" id="updateCard">
+				    	<h1><i class="glyphicon glyphicon-pencil" style="color:rgb(219, 127, 171);margin-left:8px"></i> 更新學生卡號</h1>
+				      	<br>
+				      	<span style="padding-left:25px;color:rgb(252, 255, 11)">選好名字之後，點擊下方"card number"欄位，並且使用讀卡機刷卡</p>
+				        <form accept-charset="UTF-8" id="updateCardNum">
+				          <div class="input-group col-md-8">
+				            <select id = "user" class="form-control">
+				              {% for s in student%}
+				              <option value="{{s.pk}}">{{s.c_g}} | {{s.s_id}} | {{ s.name }}</option>
+				              {% endfor %}
+				            </select>
+				             <input class="btn btn-lg" id="number" type="text" placeholder="card number" required autofocus>
+				             <button class="btn btn-info btn-lg" type="submit">Signature</button>
+				             
+				          </div>
+				          </form>
+
+				    </div>
+
+				    <div role="tabpanel" class="tab-pane" id="stdProfile">
+				    	<h1><i class="glyphicon glyphicon-user" style="color:rgb(219, 127, 171);"></i> 學生 新增/修改</h1>
+					    <div id="controlPanel" >
+					    <dl class="dl-horizontal col-md-6">
+					    <h3>手動新增</h3>
+					    	<input id ="s_id" name="pk" type="text" required hidden>
+					        <dt>Name</dt>
+					        <dd id="course">
+					            <input id="s_name"type="text"  class="form-control" placeholder="王小明" required>
+					        </dd>
+					        <dt>Student ID</dt>
+					        <dd>
+					           <input id="s_num"type="text" class="form-control" placeholder="60247099S" required>
+					        </dd>
+							<dt>Card Number</dt>
+					        <dd>
+					           <input id="s_card"type="text" class="form-control"placeholder="123124325436" >
+					        </dd>
+
+					        <dt>class</dt>
+					        <dd>
+					           <input id ="s_class"name="time" type="text" class="form-control" placeholder="博士班" required> 
+					        </dd>
+						</dl>
+						<dl class="dl-horizontal col-md-6">
+							<h3>使用者管理方法</h3>
+							<ul style="color:rgb(252, 255, 11)">
+								<li>若要更改學生資料細項，請先用下拉式選單選取帶入資料。</li>
+								<li>新增學生，只需要直接於空白欄位填入</li>
+							</ul>
+							<select id = "user2" class="form-control">
+				              <option value="">--</option>
+				              {% for s in student%}
+				              <option value="{{s.pk}}" card="{{s.card}}">{{s.c_g}} | {{s.s_id}} | {{ s.name }}</option>
+				              {% endfor %}
+				            </select>
+				            <div style="margin-top:15px;margin-left:5px;">
+						        <button id="btn_sub" type="button" class="btn btn-labeled btn-success" onclick="stdAction('POST');">
+									<span class="btn-label"><i class="glyphicon glyphicon-ok"></i></span> Create
+								</button> |
+								<button type="button" class="btn btn-labeled btn-warning" onclick="stdAction('PUT');">
+									<span class="btn-label"><i class="glyphicon glyphicon-pencil"></i></span> Update
+								</button> |	
+								<button type="button" class="btn btn-labeled btn-danger" onclick="stdAction('DELETE');">
+									<span class="btn-label"><i class="glyphicon glyphicon-trash"></i></span> Delete
+								</button> |	
+								<button type="button" class="btn btn-labeled btn-primary"  onclick="resetField();">
+									<span class="btn-label"><i class="glyphicon glyphicon-refresh"></i></span> Reset
+								</button>
+							</div>
+						</dl>	
+
+				    	</div>
+				    </div>
+			    </div>
+			    <div class="row">
+			        <div class="col-md-8 profile">
+			          <div class="alert alert-success" id="success-message" style="display: none;"></div>
+			          <div class="alert alert-danger" id="error-message" style="display: none;"></div>
+			        </div>
+		        </div>
+			</div>
+		<!-- </div> -->
+	</div>
+</div>
+
+
+<script src="http://cdnjs.cloudflare.com/ajax/libs/moment.js/2.0.0/moment.min.js"></script>
+<script type="text/javascript" src="{% static 'js/clock.js'%}"></script>
+<script type="text/javascript">
+var url = window.location.toString();
+$(function() {
+    $('#updateCardNum').on('submit', function (e) {
+    	e.preventDefault();
+    	fixCard();
+  });
+});
+function showSuccessMsg(text){
+  $("#success-message").text(text);
+  $('#success-message').fadeIn( "slow", function(){});
+  $('#success-message').delay(1500).fadeOut( "slow", function() {
+  });
+}
+function showErrorMsg(text){
+  $("#error-message").text(text);
+  $('#error-message').fadeIn( "slow", function(){});
+  $('#error-message').delay(1500).fadeOut( "slow", function() {
+  });
+}
+
+function fixCard(){
+  $.ajax({
+    url: "/op_update_card" , 
+    type: 'POST', 
+    data: {
+      'number': $("#number").val(),
+      'user': $("#user").val(),
+    },
+    success: function(msg) {
+      $("#number").val("");
+      if (msg == 'success'){
+       showSuccessMsg("修改成功!!");
+      }else{
+        showErrorMsg(msg);  
+        resetField();
+      }
+    },
+    error: function(msg) {
+      $("#number").val("");
+      showErrorMsg(msg);
+      resetField();
+    }
+  });
+}
+
+function resetField(){
+  	$('#btn_sub').removeClass('disabled');
+	$('#s_id').val("");
+	$('#s_name').val("");
+	$('#s_num').val("");
+	$('#s_card').val("");
+	$('#s_class').val("");
+	$('#user2').val("");
+}
+
+$('.card a').click(function (e) {
+  e.preventDefault()
+  $(this).tab('show')
+})
+
+
+$('#user2').change(function(e) {
+    var sel_id = $(this).find("option:selected");
+    if (sel_id != "") {
+        $('#btn_sub').addClass('disabled');
+        var s_text = sel_id.text();
+            $('#s_id').val(sel_id.val());
+            $('#s_name').val(s_text.split(" | ")[2]);
+            $('#s_num').val(s_text.split(" | ")[1]);
+            $('#s_card').val(sel_id.attr('card'));
+            $('#s_class').val(s_text.split(" | ")[0]);
+    } else {
+        $('#btn_sub').removeClass('disabled');
+        $('#s_id').val("");
+        $('#s_name').val("");
+        $('#s_num').val("");
+        $('#s_card').val("");
+        $('#s_class').val("");
+    }
+});
+
+function stdAction(method) {
+    if (method == "DELETE" || method == "PUT") {
+        if ($('#s_id').val() == "") {
+            alert("請先選擇欲修改的學生資料");
+            return;
+        } else if (method == "DELETE"){
+            if (!confirm("刪除後，連刷卡紀錄也一併刪除，您確定要這麼做嗎？")) return;
+        }
+    }
+    if (method == "POST"){
+    	if ($('#s_name').val() == "" && $('#s_id').val() == ""){
+    		alert("至少輸入姓名以及學號");
+    		return;
+    	}
+    }
+
+    $.ajax({
+        url: "/op_std_profile",
+        type: "POST",
+        data: {
+            'method': method,
+            'pk': $('#s_id').val(),
+            'name': $('#s_name').val(),
+            'num': $('#s_num').val(),
+            'card': $('#s_card').val(),
+            's_class': $('#s_class').val(),
+        },
+        success: function(msg) {
+            if (method == "DELETE") {
+                alert("刪除成功");
+            } else if (method == "PUT") {
+                alert("修改成功");
+            } else if (method == "POST") {
+                alert("新增成功");
+            }
+            location.reload();
+
+        },
+        error: function(msg) {
+            console.log(msg);
+        }
+    });
+}
+</script>
+{% endblock %}

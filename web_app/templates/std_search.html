@@ -2,6 +2,22 @@
 {% extends 'base.html' %} 
 {% block content %}
 {% load staticfiles %}
+<style type="text/css">
+	.text-success{
+		color:#5DFD60;
+	}
+	.co-in{
+		color:#5DFD60;
+		font-size:20px;
+	}
+	.text-warning{
+		color:#FFFB60;
+	}
+	.co-out{
+		color:#FFFB60;
+		font-size:20px;
+	}
+</style>
 <div class="container col-md-offset-2">
     <div class="col-md-12">
       <h1 class="page-header"> 學生記錄查詢</h1>
@@ -10,7 +26,7 @@
       <form accept-charset="UTF-8" action="/std_search" method="post">
         <div class="input-group">
           <img class="icon" src="{% static 'icon/p7.png' %}">     
-           <input class="btn btn-lg" name="name" type="text" placeholder="name or student id" required>
+           <input class="btn btn-lg" name="name" type="text" placeholder="name or student id" required autofocus>
            <button class="btn btn-info btn-lg" type="submit">Search</button>
         </div>
         </form>
@@ -43,4 +59,17 @@
     </div>
 	</div>
 </div>
+
+<script type="text/javascript">
+$(function(){
+	$('tbody > tr').each(function(){
+		var status = $(this).children('td').eq(4);
+		if (status.text() == "signin"){
+			status.html("<span class='text-success'> IN "+"<i class='fa fa-sign-in co-in'></i> </span>");
+		} else {
+			status.html("<span class='text-warning'> <i class='fa fa-sign-out text-danger co-out'></i>"+" OUT </span>");
+		}
+	})
+});
+</script>
 {% endblock %}

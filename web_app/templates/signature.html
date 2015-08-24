@@ -123,8 +123,6 @@ function showErrorMsg(text){
 function sign(btn,field){
   var user = $("#number").val();
   $('#btn_Submit').toggleClass("disabled");
-  var state = "";
-  (scan_state==true)?state="signin" : state="signout";
   if (currentSTD != $("#number").val()){
     $.ajax({
       url: "/scan_sign" , 
@@ -132,7 +130,6 @@ function sign(btn,field){
       data: {
         'unit': unit,
         'card_id': user,
-        'state': state,
       },
       success: function(msg) {
         console.log(msg);
